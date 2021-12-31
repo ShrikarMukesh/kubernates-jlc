@@ -1,0 +1,145 @@
+Master :
+ssh ubuntu@18.217.119.87
+
+
+Share a Cluster with Namespaces
+===========================
+=> Namespaces provides a mechanism for isolating groups of resources within a single cluster. 
+
+=>Names of resources need to be unique within a namespace, but not across namespaces. 
+
+=> Namespaces cannot be nested inside one another and each Kubernetes resource can only be in one namespace.
+
+When to Use Multiple Namespaces
+========================
+=> Namespaces are intended for use in environments with many users spread across multiple teams.
+
+=> Namespaces are a way to divide cluster resources between multiple users (via resource quota).
+
+
+Working with Namespaces
+========================
+kubectl get namespace
+kubectl get namespaces
+
+kubectl get namespaces kube-system
+
+kubectl describe namespaces default
+
+kubectl describe namespaces kube-system
+
+kubectl create namespace jlc-book-store
+kubectl create namespace jlc-bank
+
+kubectl get namespaces
+
+kubectl describe namespace jlc-system
+
+kubectl get pods -n kube-system
+
+kubectl get pods -n jlc-book-store
+
+kubectl get pods --all-namespaces        
+
+kubectl run mypod1 --image nginx  --namespace=jlc-book-store
+
+kubectl run mypod1 --image nginx  --namespace=jlc-bank
+
+kubectl run mypod1 --image nginx  
+
+
+kubectl get pods
+
+kubectl get pods -n jlc-bank
+
+kubectl get pods -n jlc-book-store
+
+Create a new YAML file called my-namespace.yaml with the contents:
+
+book-store-nm.yml
+==========
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jlc-book-store
+
+
+===============================
+scp book-store-nm.yml ubuntu@18.217.119.87:/home/ubuntu/mynms
+
+
+jlc-bank-nm.yml
+==========
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jlc-bank
+
+===============================
+scp jlc-bank-nm.yml ubuntu@18.217.119.87:/home/ubuntu/mynms
+
+
+kubectl create -f  book-store-nm.yml
+
+kubectl create -f  jlc-bank-nm.yml
+
+Let's create two new namespaces to hold our work.
+=========
+dev-nm.json
+==========
+{
+  "apiVersion": "v1",
+  "kind": "Namespace",
+  "metadata": {
+    "name": "development",
+    "labels": {
+      "name": "development"
+    }
+  }
+}
+
+scp dev-nm.json ubuntu@18.191.136.78:/home/ubuntu/mynms
+
+kubectl create -f dev-nm.json
+
+=========
+prod-nm.json
+==========
+{
+  "apiVersion": "v1",
+  "kind": "Namespace",
+  "metadata": {
+    "name": "production",
+    "labels": {
+      "name": "production"
+    }
+  }
+}
+
+scp prod-nm.json ubuntu@18.191.136.78:/home/ubuntu/mynms
+
+kubectl create -f prod-nm.json
+
+kubectl get namespaces 
+kubectl get namespaces --show-labels
+
+kubectl delete namespace production
+kubectl delete namespace development
+
+List the Namespaces
+Create Namespace with Command
+Create the Pods in required Namespace
+List Pods
+List the Pods from given Namepsace
+Decscribe Namepsace
+Create Namespace with YML 
+Create Namespace with JSON
+Delete Namepsace
+
+Divide the K-Cluster for Different Teams for Different Projects
+
+
+
+          
+
+

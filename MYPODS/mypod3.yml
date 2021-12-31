@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod3
+spec:
+  restartPolicy: Always
+  containers: 
+  - name: mynginx
+    image: nginx
+    ports:
+     - containerPort: 81
+  - name: mytomcat
+    image: tomcat
+    ports:
+     - containerPort: 8089
+  - name: mycentos
+    image: centos
