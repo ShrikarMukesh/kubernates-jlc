@@ -1,0 +1,91 @@
+Master 
+ssh ubuntu@3.129.65.14
+
+
+8. Pod Design
+============================
+8.3.  Cron Jobs in Kubernetes
+============================
+To Perform the Given Job of Completion at Regular Intervals
+
+Cron Job = Schedule + Job
+
+========================
+mycron-job1.yml    - Cron Job Configuration
+========================
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: myjlc-cron-job
+  labels:
+    appName: jlc-bs
+  annotations:
+    author: Srinivas
+    buildVersion: "1.9"
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      completions: 3
+      template: 
+        spec: 
+          restartPolicy: Never
+          containers:
+            - name: myubuntu
+              image: ubuntu 
+              command:
+                    - /bin/sh
+                    - -c
+                    - date; echo Hello Guys, welcome to JLC
+        
+========================================================
+scp mycron-job1.yml ubuntu@3.129.65.14:/home/ubuntu/pod-design
+========================================================
+kubectl create -f  mycron-job1.yml
+
+kubectl get pods
+
+kubectl describe cronjob myjlc-cron-job
+
+kubectl logs myjlc-cron-job-27458861--1-5z2pn
+
+kubectl delete cronjob  myjlc-cron-job
+
+========================
+mycron-job2.yml    - Cron Job Configuration
+========================
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: myjlc-cron-job
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      completions: 3
+      parallelism: 3
+      template: 
+        spec: 
+          restartPolicy: Never
+          containers:
+            - name: myubuntu
+              image: ubuntu 
+              imagePullPolicy: IfNotPresent
+              command:
+                    - /bin/sh
+                    - -c
+                    - date; echo Hello Guys, welcome to JLC
+        
+========================================================
+scp mycron-job2.yml ubuntu@3.129.65.14:/home/ubuntu/pod-design
+========================================================
+kubectl create -f  mycron-job2.yml
+
+kubectl get pods
+
+kubectl describe cronjob myjlc-cron-job
+
+kubectl logs myjlc-cron-job-27458866--1-4l5rm
+
+kubectl delete cronjob  myjlc-cron-job
+

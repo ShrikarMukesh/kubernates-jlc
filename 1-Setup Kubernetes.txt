@@ -1,12 +1,11 @@
 Master :
-ssh ubuntu@3.15.38.166
+ssh ubuntu@3.138.103.186
 
 Worker -1 
-ssh ubuntu@3.144.219.125
+ssh ubuntu@3.21.185.196
 
 Worker -2
-ssh ubuntu@3.144.215.14
-
+ssh ubuntu@18.116.66.239
 
 sudo hostnamectl set-hostname Master
 sudo hostnamectl set-hostname Worker-1
@@ -64,7 +63,7 @@ ssh ubuntu@18.222.131.190
 
 docker version // Now Ok
 
-=> 11) Do the Following (VVVIMP)
+11) Do the Following
 
 sudo mkdir /etc/docker
 
@@ -124,8 +123,7 @@ On Master Only
 
 sudo kubeadm init
 
-....
-.....
+
 Your Kubernetes control-plane has initialized successfully!
 
 To start using your cluster, you need to run the following as a regular user:
@@ -134,16 +132,20 @@ To start using your cluster, you need to run the following as a regular user:
   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
   sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
 
 You should now deploy a pod network to the cluster.
-Run
- "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
   https://kubernetes.io/docs/concepts/cluster-administration/addons/
 
 Then you can join any number of worker nodes by running the following on each as root:
 
-sudo kubeadm join 172.31.23.76:6443 --token 816luq.626dky7k6ok0cnaa \
-        --discovery-token-ca-cert-hash sha256:cac6da0c69bd68afe5541f52dcc9fafdaa9827f1cadb360453f45b46225cbae7
+sudo kubeadm join 172.31.17.11:6443 --token mm7d0m.k60pfu7mwvjcxk4d \
+        --discovery-token-ca-cert-hash sha256:fb0bc54a93d1a05de7de8bb21354d6a2cdad77c0cfb2d2da7ef214c8aba6a456
+
+
 
 ========================================
 $ kubectl get nodes
@@ -160,37 +162,33 @@ ip-172-31-17-11   NotReady   control-plane,master   112s   v1.22.4
 
 $ kubectl get nodes
 NAME               STATUS     ROLES                  AGE   VERSION
-master     NotReady   control-plane,master   7m9s   v1.22.4
-worker-1   NotReady   <none>                 39s    v1.22.4
-worker-2   NotReady   <none>                 10s    v1.22.4
+ip-172-31-17-11    NotReady   control-plane,master   21m   v1.22.4
+ip-172-31-19-240   NotReady   <none>                 31s   v1.22.4
+ip-172-31-26-191   NotReady   <none>                 16s   v1.22.4
 ========================================
 
 ## Weave
 kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')" 
 
+kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 
 ========================================
 ubuntu@ip-172-31-17-11:~$ kubectl get nodes
-master     Ready    control-plane,master   10m     v1.22.4
-worker-1   Ready    <none>                 4m19s   v1.22.4
-worker-2   Ready    <none>                 3m50s   v1.22.4
-
-kubectl get pods
-
-kubectl get namespaces
-
-kubectl get pods -n kube-system
-
-docker images
+NAME               STATUS   ROLES                  AGE     VERSION
+ip-172-31-17-11    Ready    control-plane,master   25m     v1.22.4
+ip-172-31-19-240   Ready    <none>                 4m6s    v1.22.4
+ip-172-31-26-191   Ready    <none>                 3m51s   v1.22.4
+ubuntu@ip-172-31-17-11:~$
 
 ========================================
 On Worker Only
 ========================================
 
-sudo kubeadm join 172.31.23.76:6443 --token 816luq.626dky7k6ok0cnaa  --discovery-token-ca-cert-hash sha256:cac6da0c69bd68afe5541f52dcc9fafdaa9827f1cadb360453f45b46225cbae7
+sudo kubeadm join 172.31.17.11:6443 --token mm7d0m.k60pfu7mwvjcxk4d \
+        --discovery-token-ca-cert-hash sha256:fb0bc54a93d1a05de7de8bb21354d6a2cdad77c0cfb2d2da7ef214c8aba6a456
 
 
-===========
+
 ========================================
 kubeadm reset
 sudo apt-get purge kubeadm kubectl kubelet kubernetes-cni kube*   
@@ -199,6 +197,22 @@ sudo rm -rf ~/.kube
 ========================================
 kubectl describe nodes Master
 
+ mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+Alternatively, if you are the root user, you can run:
+
+  export KUBECONFIG=/etc/kubernetes/admin.conf
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+sudo kubeadm join 172.31.16.198:6443 --token 5lvtb7.8p8n4c6xytz8ohn9 \
+        --discovery-token-ca-cert-hash sha256:bd3f7ae45afb17f6c04a1d3c7f22e6582cb0f900413c98155a7e858d6e4c7abe
 
 
 

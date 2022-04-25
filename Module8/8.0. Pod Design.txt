@@ -1,0 +1,15 @@
+8) Pod Design 
+===============
+1) Labels, Selectors, and Annotations
+
+Refer Session 50:
+-------------------
+Understand Deployments 
+How to perform rolling updates
+How to perform rollbacks
+Updating Deployments
+
+2) Understand Jobs 
+3) Understand CronJobs
+
+Deployments Vs Jobs 

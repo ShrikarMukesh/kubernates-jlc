@@ -1,8 +1,13 @@
 Master :
-ssh ubuntu@18.217.119.87
+ssh ubuntu@18.117.160.249
 
+Worker -1 
+ssh ubuntu@3.133.97.125
 
-Share a Cluster with Namespaces
+Worker -2
+ssh ubuntu@3.142.140.60
+
+ Share a Cluster with Namespaces
 ===========================
 => Namespaces provides a mechanism for isolating groups of resources within a single cluster. 
 
@@ -28,8 +33,7 @@ kubectl describe namespaces default
 
 kubectl describe namespaces kube-system
 
-kubectl create namespace jlc-book-store
-kubectl create namespace jlc-bank
+kubectl create namespace jlc-system
 
 kubectl get namespaces
 
@@ -37,51 +41,33 @@ kubectl describe namespace jlc-system
 
 kubectl get pods -n kube-system
 
-kubectl get pods -n jlc-book-store
+kubectl get pods -n jlc-system
 
 kubectl get pods --all-namespaces        
 
-kubectl run mypod1 --image nginx  --namespace=jlc-book-store
+kubectl run mypod1 --image nginx  --namespace=jlc-system
 
-kubectl run mypod1 --image nginx  --namespace=jlc-bank
-
-kubectl run mypod1 --image nginx  
-
+kubectl run mypod2 --image tomcat   --namespace=jlc-system
 
 kubectl get pods
 
-kubectl get pods -n jlc-bank
-
-kubectl get pods -n jlc-book-store
+kubectl get pods -n jlc-system
 
 Create a new YAML file called my-namespace.yaml with the contents:
 
-book-store-nm.yml
+hello-nm.yml
 ==========
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: jlc-book-store
-
-
-===============================
-scp book-store-nm.yml ubuntu@18.217.119.87:/home/ubuntu/mynms
-
-
-jlc-bank-nm.yml
-==========
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: jlc-bank
+  name: hello-namespace
 
 ===============================
-scp jlc-bank-nm.yml ubuntu@18.217.119.87:/home/ubuntu/mynms
+scp hello-nm.yml ubuntu@18.191.136.78:/home/ubuntu/mynms
 
 
-kubectl create -f  book-store-nm.yml
+kubectl create -f  hello-nm.yml
 
-kubectl create -f  jlc-bank-nm.yml
 
 Let's create two new namespaces to hold our work.
 =========
@@ -126,17 +112,7 @@ kubectl get namespaces --show-labels
 kubectl delete namespace production
 kubectl delete namespace development
 
-List the Namespaces
-Create Namespace with Command
-Create the Pods in required Namespace
-List Pods
-List the Pods from given Namepsace
-Decscribe Namepsace
-Create Namespace with YML 
-Create Namespace with JSON
-Delete Namepsace
 
-Divide the K-Cluster for Different Teams for Different Projects
 
 
 

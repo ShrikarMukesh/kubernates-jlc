@@ -1,11 +1,11 @@
 Master :
-ssh ubuntu@13.59.140.36
+ssh ubuntu@18.117.250.254
 
 Worker -1 
-ssh ubuntu@18.116.114.209
+ssh ubuntu@3.144.196.32
 
 Worker -2
-ssh ubuntu@3.141.17.5
+ssh ubuntu@3.144.213.49
 
 =======================================
 # List all running Nodes in Clustor
@@ -38,6 +38,8 @@ kubectl get pods -o wide
 
 kubectl describe pod mypod1
 
+kubectl describe pod mypod1 -o wide      
+
 kubectl run mypod2 --image tomcat
 
 kubectl get pods  
@@ -46,31 +48,13 @@ kubectl get pods -o wide
 
 kubectl describe pod mypod2    
 
-mypod2   contains One Docker Container 
-Docker Container conatins Tomcat 
+kubectl describe pod mypod2 -o wide      
 
-kubectl exec -it mypod1   -- /bin/bash
+kubectl exec -it mypod1   -- /bin/bash     
 
-ubuntu@Master:~$ kubectl exec -it mypod1 -- /bin/bash
-root@mypod1:/#
-
-CTRL + PQ
-
-ubuntu@Master:~$ kubectl exec -it mypod2   -- /bin/bash
-root@mypod2:/usr/local/tomcat# cd logs
-root@mypod2:/usr/local/tomcat/logs# cat log-file-name
-
-CTRL + PQ
-
-kubectl logs mypod1
+kubectl exec -it mypod2   -- /bin/bash     
 
 kubectl logs mypod2
-
-Where we will get logs
-
-1)Tomcat logs
-2)docker logs mypod2
-3)kubectl logs mypod2
 
 kubectl logs -f mypod2
 
@@ -81,16 +65,13 @@ kubectl delete pod mypod1 --grace-period=0 --force
 
 kubectl delete pods --all
 
-kubectl run mypod1 --image nginx 
+kubectl run mypod1 --image nginx
 
 kubectl run mypod2 --image tomcat
 
 kubectl delete pods --all
 
-=====================================
 kubectl run mypod --image tomcat --dry-run=client -o yaml
-kubectl run mypod --image tomcat --dry-run=client -o yaml
-
 =================================================
 Pods in a Kubernetes cluster are used in two main ways:
 
@@ -118,7 +99,7 @@ spec:
      - containerPort: 8080
 
 ======================================
-scp mypod1.yml ubuntu@13.59.140.36:/home/ubuntu/mypods
+scp mypod1.yml ubuntu@18.117.250.254:/home/ubuntu/mypods
 ============================================
 
 kubectl create -f mypod1.yml
@@ -127,17 +108,16 @@ kubectl apply -f mypod1.yml
 
 kubectl get pods -o wide         
 
-kubectl describe pod mypod1
+kubectl describe pod mypod2   
 
-kubectl logs -f mypod1 -c mytomcat   
+kubectl logs -f mypod2 -c my-container       
 
 kubectl exec -it mypod1  -- /bin/bash 
 
 2) Pods that run multiple containers that need to work together.
 ==============================================
 =>  A Pod can contain multiple co-located containers that are tightly coupled and need to share resources. 
-
-=> Ex: App Container + DM Conatiner
+=> Ex:
 
 ===============
 mypod2.yml
@@ -147,7 +127,7 @@ kind: Pod
 metadata:
   name: mypod2
 spec:
-  restartPolicy: OnFailure
+  restartPolicy: Never
   containers:
   - name: mynginx
     image: nginx
@@ -159,7 +139,7 @@ spec:
      - containerPort: 8080
 
 =============================================
-scp mypod2.yml ubuntu@13.59.140.36:/home/ubuntu/mypods
+scp mypod2.yml ubuntu@18.117.250.254:/home/ubuntu/mypods
 ============================================
 kubectl create -f mypod2.yml
 
@@ -167,77 +147,13 @@ kubectl apply -f mypod2.yml
 
 kubectl get pods -o wide         
 
-kubectl describe pod mypod2
+kubectl describe pod mypod2   
 
-kubectl logs mypod2 //Error
-
-kubectl logs -f mypod2 -c mynginx
-
-kubectl logs -f mypod2 -c mytomcat
+kubectl logs -f mypod2 -c mytomcat        
 
 kubectl exec -it mypod2  -- /bin/bash 
-
 kubectl exec -it mypod2 -c mynginx -- /bin/bash 
 kubectl exec -it mypod2 -c mytomcat -- /bin/bash 
-========================================
-===============
-mypod3.yml
-==============
-apiVersion: v1
-kind: Pod
-metadata:
-  name: mypod3
-spec:
-  restartPolicy: Always
-  containers:
-  - name: mynginx
-    image: nginx
-    ports:
-     - containerPort: 80
-  - name: mytomcat
-    image: tomcat
-    ports:
-     - containerPort: 8080
-  - name: mycentos
-    image: centos
-
-=============================================
-scp mypod3.yml ubuntu@13.59.140.36:/home/ubuntu/mypods
-============================================
-kubectl create -f mypod3.yml
-
-kubectl apply -f mypod3.yml
-
-kubectl get pods -o wide         
-
-===============
-mypod4.yml
-==============
-apiVersion: v1
-kind: Pod
-metadata:
-  labels:
-    run: mypod
-  name: mypod
-spec:
-  containers:
-  - image: dandesclasses/myjlcapp:v1.0
-    name: myjlc-conatiner
-  restartPolicy: Always
-
-=============================================
-scp mypod3.yml ubuntu@13.59.140.36:/home/ubuntu/mypods
-============================================
-kubectl create -f mypod4.yml
-
-kubectl apply -f mypod4.yml
-
-kubectl get pods -o wide         
-
-kubectl run mypod --image dandesclasses/myjlcapp:v1.0 --dry-run=client -o yaml
-
-
-
 ========================================
 kubeadm token create --print-join-command
 
@@ -282,7 +198,7 @@ Container restart policy
 The spec of a Pod has a restartPolicy field with possible values 
 Always, 
 OnFailure, 
-Never
+Never. 
 
 The default value is Always.
 

@@ -1,0 +1,216 @@
+Master 
+ssh ubuntu@18.222.134.213
+
+
+8. Pod Design
+============================
+8.1) Labels, Selectors, and Annotations
+============================
+A) Labels:
+----------
+=> Labels are simple key: value pairs 
+=> Labels are attached to Kubernetes objects likes Pods, Replica Sets, Services, Deployments etc
+=> Labels are used to Group the Kubernetes  Objects
+=> Labels are queryable
+
+B) Selectors:
+----------------
+=>  Selector is to pick the required Group of Objects matching with Label. 
+=> A label selector is a string that identifies which labels you are trying to match.
+
+C) Annotations
+-------------------
+=> Annotations are simple key: value pairs 
+=> Annotations allows you to write extra useful information about Kubernetes  Objects
+
+Ex:
+Author, Build Date, Build Version, Email etc
+
+Labels are used to store identifying information about a thing that you might need to query against. 
+
+Annotations are used to store other arbitrary information that you will not have to query against.
+
+========================
+mypod34.yml    - Pod Configuration
+========================
+apiVersion: v1
+kind: Pod
+metadata:
+  name: jlcpod
+  labels:
+    appName: myjlcbs
+    layer: frontend
+  annotations:
+    author: Srinivas
+    buildVersion: "1.9"
+    
+spec:
+  containers:
+   - name: myjlc-container
+     image: nginx
+     ports:
+       - containerPort: 8080
+
+========================================================
+scp mypod34.yml ubuntu@18.222.134.213:/home/ubuntu/pod-design
+========================================================
+kubectl create -f  mypod34.yml 
+
+kubectl get pods
+
+kubectl get pods --show-labels
+
+kubectl describe pod jlcpod
+
+Add the Label to Running Kubernetes Object
+---------------------------------------
+Syntax:
+
+kubectl label <resource-type> <resource-name> <label-key>=<value>
+
+Ex:
+kubectl label pod jlcpod env=production
+
+Remove the Label from Running Kubernetes Object
+---------------------------------------
+Syntax:
+
+kubectl label <resource-type> <resource-name> <label-key>-
+
+Ex:
+kubectl label pod jlcpod env-
+
+kubectl label pod jlcpod appName-
+
+kubectl label pod jlcpod appName=myjlcbs
+
+Get the Pods based on Selector
+---------------------------------------
+kubectl get pods --selector "appName=myjlcbs"
+kubectl get pods --selector "layer=backend"
+kubectl get pods --selector "layer=frontend"
+
+Dont delete the jlcpod
+
+========================
+myreplicaset.yml   - ReplicaSet Configuration
+========================
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: myjlc-replicatset
+  labels:
+    app: jlc-book-store
+  annotations:
+    author: Srinivas Dande
+    buildVersion: "2.9"
+spec:
+  selector:
+    matchLabels:
+       appName: myjlcbs
+       layer: frontend
+  replicas: 2
+  template:
+    metadata:
+      name: myjlc-pod
+      labels:
+        appName: myjlcbs
+        layer: frontend
+      annotations:
+        author: Srinivas
+        buildVersion: "1.9"
+    spec:
+      containers:
+        - name: myjlc-container
+          image: nginx
+          ports:
+            - containerPort: 8080
+
+========================================================
+scp myreplicaset.yml ubuntu@18.222.134.213:/home/ubuntu/pod-design
+========================================================
+
+kubectl get pods --show-labels
+
+kubectl create -f  myreplicaset.yml
+
+kubectl get replicasets
+
+kubectl get replicasets --show-labels
+
+kubectl get pods --show-labels
+
+kubectl describe replicaset myjlc-replicatset
+
+
+Add the Label to Running Kubernetes Object
+---------------------------------------
+Syntax:
+
+kubectl label <resource-type> <resource-name> <label-key>=<value>
+
+Ex:
+kubectl label replicaset myjlc-replicatset env=production
+
+Remove the Label from Running Kubernetes Object
+---------------------------------------
+Syntax:
+
+kubectl label <resource-type> <resource-name> <label-key>-
+
+Ex:
+kubectl label replicaset myjlc-replicatset env-
+
+
+Get the Replicasets  based on Selector
+---------------------------------------
+kubectl get replicasets  --selector "appName=myjlcbs"
+
+kubectl get replicasets  --selector "app=jlc-book-store" --show-labels
+
+
+Experimental Steps:
+----------------------------
+1) List the Pods
+
+kubectl get pods --show-labels
+
+2)Remove the Label
+
+kubectl label pod jlcpod layer-
+
+3) How Many total pods will run ?
+Ans:  
+3
+
+4) Add the Label?
+
+kubectl label pod jlcpod layer=frontend
+
+5) How Many total pods will run ?
+Ans:  
+2
+
+Deleting a ReplicaSet
+------------------------------
+kubectl delete replicaset myjlc-replicatset
+
+kubectl delete pod jlcpod
+
+kubectl get nodes --show-labels
+
+Removing Label from Nodes
+-------------------------------------------
+kubectl label node worker-1  appType-
+kubectl label node worker-1  myappType-
+
+
+kubectl label node worker-2  appType-
+kubectl label node worker-2  myappType-
+
+=============================
+kubectl get limitranges
+kubectl delete limitrange cpu-limit-range
+kubectl delete limitrange mem-limit-range
+
+

@@ -1,5 +1,11 @@
 Master :
-ssh ubuntu@18.217.119.87
+ssh ubuntu@18.117.250.254
+
+Worker -1 
+ssh ubuntu@3.144.196.32
+
+Worker -2
+ssh ubuntu@3.144.213.49
 
 About ReplicaSet
 ===========================
@@ -22,7 +28,7 @@ kubectl explain replicaset
 ========================
 Replica Set Demo #1 : 
 ========================
-YAML Configuration file for ReplicaSet : -- myreplicaset.yml
+YAML Configuration file for ReplicaSet : -- myreplicaset1.yml
 -----------------------------------------------------------------------------
 apiVersion: apps/v1
 kind: ReplicaSet
@@ -49,29 +55,9 @@ spec:
 
 
 ===============================
-scp myreplicaset.yml ubuntu@18.217.119.87:/home/ubuntu/myrs
+scp myreplicaset1.yml ubuntu@18.117.160.249:/home/ubuntu
 
-YAML Configuration file for Pod: -- mypod.yml
--------------------------------------------------------------
-apiVersion: v1
-kind: Pod
-metadata:
-  name: mypod1
-  labels:
-    app: mypods
-spec:
-  containers:
-  - name: myconatiner1
-    image: nginx
-    ports:
-     - containerPort: 8080
-
-
-===============================
-scp mypod.yml ubuntu@18.217.119.87:/home/ubuntu/myrs
-
-
-kubectl create -f  myreplicaset.yml
+kubectl create -f  myreplicaset1.yml
 
 kubectl get replicasets
 
@@ -81,42 +67,15 @@ kubectl get pods -o wide
 
 kubectl get pods --show-labels
 
-***Delete the Pod
+kubectl get pods  -l app=myjlc
 
-kubectl delete pod myjlc-rs-hqsjd 
+kubectl get pods --show-labels -l app=myjlc
 
-*** Create New Pod
-kubectl create -f  mypod.yml
-
-
-Edit mypod.yml
-
-scp mypod.yml ubuntu@18.217.119.87:/home/ubuntu/myrs
-
-*** Create New Pod
-kubectl create -f  mypod.yml
-
-kubectl get pods
+kubectl describe replicaset myjlc-replicaset
 
 kubectl get pods --show-labels
 
-kubectl get pods  -l app=myjlc
-
-kubectl get pods  -l app=mypods
-
-kubectl get pods  -l myapp=myjlc-app
-
-kubectl get pods --show-labels -l myapp=myjlc-app
-
-
-kubectl get replicasets
-
-kubectl describe replicaset myjlc-rs
-
-Scale :
-=====
-
-kubectl scale replicaset myjlc-rs  --replicas=9
+kubectl scale replicaset myjlc-replicaset --replicas=6
 
 kubectl get pods --show-labels
 
@@ -124,23 +83,7 @@ kubectl scale replicaset myjlc-replicaset --replicas=3
 
 kubectl get pods --show-labels
 
-Delete
-=====
-kubectl delete replicaset myjlc-rs
+kubectl delete replicaset myjlc-replicaset
 
-
-================================
-Can we say  
-"Metadata Name" helps to name the each POD while creating PODS via Replicaset.
-
-"LABEL" helps to prevent additional POD creation.
-
-"LABEL" helps to pick required pods
-
-Define ReplicaSet YML
-Create ReplicaSet
-Describe ReplicaSet
-Scaling ReplicaSet  
-Delete ReplicaSet 
 
 
